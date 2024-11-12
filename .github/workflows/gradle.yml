@@ -61,9 +61,9 @@ jobs:
     - name: Build & push Docker image
     
       with:
-        image: repo/image
+        image: vaibhavshejol/github-actions
         tags: v1, latest
-        registry: registry-url.io
+        registry: docker.io
         dockerfile: Dockerfile.ci
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
