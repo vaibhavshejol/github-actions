@@ -39,9 +39,8 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
-    - uses: mr-smithers-excellent/docker-build-push@v6
     - name: Build & push Docker image
-    
+    - uses: mr-smithers-excellent/docker-build-push@v6
       with:
         image: vaibhavshejol/github-actions
         tags: v1, latest
