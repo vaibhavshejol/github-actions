@@ -8,6 +8,7 @@ class GithubActionsApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// Load the context or beans
 	}
 
 }
