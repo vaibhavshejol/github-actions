@@ -88,6 +88,46 @@ jobs:
           name: DAST_Report.html
           path: ./report_html.html
 
+      - name: Convert ZAP JSON report to SARIF
+        run: |
+          pip install sarif-om
+          python - <<EOF
+          import json
+          from sarif_om import *
+          
+          with open("report_json.json", "r") as f:
+              zap_report = json.load(f)
+          
+          # Convert ZAP JSON findings to SARIF format
+          run = Run(
+              tool=Tool(
+                  driver=ToolComponent(
+                      name="OWASP ZAP",
+                      version="stable",
+                      information_uri="https://www.zaproxy.org/",
+                      rules=[]
+                  )
+              ),
+              results=[],
+          )
+          
+          sarif = SarifSchema(version="2.1.0", runs=[run])
+          
+          with open("report.sarif", "w") as f:
+              f.write(sarif.to_json())
+          EOF
+
+      # - name: Upload SARIF report
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: DAST_Report.sarif
+      #     path: report.sarif
+
+      - name: Upload SARIF report
+        uses: actions/upload-sarif@v1
+        with:
+          sarif_file: report.sarif
+
       - name: Package JSON Report into a Container
         run: |
           echo "FROM alpine" > Dockerfile
@@ -101,7 +141,7 @@ jobs:
       - name: stop docker
         if: always()
         run: |
-          docker-compose down
+          # docker-compose down
           docker stop github-actions || true
           docker rm github-actions || true
           docker container prune --force || true
