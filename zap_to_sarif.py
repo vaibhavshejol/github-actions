@@ -108,9 +108,9 @@ def main():
         # Convert to SARIF
         sarif_output = convert_zap_to_sarif(zap_json)
         
-        # Write output file
+        # Write output file - Fixed the json.dump syntax
         with open('zap_report.sarif', 'w') as f:
-            json.dump(sarif_output, indent=2, f)
+            json.dump(sarif_output, f, indent=2)
             
         print("Successfully converted ZAP report to SARIF format")
         
