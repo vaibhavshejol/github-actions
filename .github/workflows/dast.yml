@@ -88,47 +88,19 @@ jobs:
           name: DAST_Report.html
           path: ./report_html.html
 
-      - name: Convert ZAP JSON report to SARIF
+      - name: Compress reports into a zip file
         run: |
-          pip install sarif-om
-          python - <<EOF
-          import json
-          from sarif_om import Sarif, Run, Tool, ToolComponent
-          from sarif_om.sarif import Sarif
-          
-          with open("report_json.json", "r") as f:
-              zap_report = json.load(f)
-          
-          # Convert ZAP JSON findings to SARIF format
-          run = Run(
-              tool=Tool(
-                  driver=ToolComponent(
-                      name="OWASP ZAP",
-                      version="stable",
-                      information_uri="https://www.zaproxy.org/",
-                      rules=[]
-                  )
-              ),
-              results=[],
-          )
-          
-          sarif = Sarif(version="2.1.0", runs=[run])
-          
-          with open("report.sarif", "w") as f:
-              f.write(sarif.to_json(indent=2))
-          EOF
-
-      - name: Upload SARIF report
-        uses: actions/upload-artifact@v3
-        with:
-          name: DAST_Report.sarif
-          path: report.sarif
+          zip DAST_Reports.zip report_json.json report_html.html
 
       - name: Package JSON Report into a Container
         run: |
+          # echo "FROM alpine" > Dockerfile
+          # echo "COPY report_json.json /report_json.json" >> Dockerfile
+          # echo "CMD [\"cat\", \"/report_json.json\"]" >> Dockerfile
+          
           echo "FROM alpine" > Dockerfile
-          echo "COPY report_json.json /report_json.json" >> Dockerfile
-          echo "CMD [\"cat\", \"/report_json.json\"]" >> Dockerfile
+          echo "COPY DAST_Reports.zip /DAST_Reports.zip" >> Dockerfile
+          echo "CMD [\"cat\", \"/DAST_Reports.zip\"]" >> Dockerfile
           docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/dast-report:latest .
 
       - name: Push JSON Report to GitHub Container Registry
