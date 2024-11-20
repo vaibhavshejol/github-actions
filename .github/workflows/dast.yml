@@ -76,13 +76,33 @@ jobs:
           cmd_options: '-a -j -l WARN -r report_html.html -w report_md.md -J report_json.json -z "-addoninstallall" '
           allow_issue_writing: true
 
-      - name: Upload json report
+      # Copy ZAP report to expected filename
+      - name: Copy ZAP report
+        run: cp report_json.json zap_report.json
+
+      # Install Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Convert ZAP report to SARIF
+      - name: Convert ZAP report to SARIF
+        run: python zap_to_sarif.py
+
+      - name: Upload SARIF report
+        uses: actions/upload-artifact@v3
+        with:
+          name: DAST_Report.sarif
+          path: ./zap_report.sarif
+
+      - name: Upload JSON report
         uses: actions/upload-artifact@v3
         with:
           name: DAST_Report.json
           path: ./report_json.json
 
-      - name: Upload html report
+      - name: Upload HTML report
         uses: actions/upload-artifact@v3
         with:
           name: DAST_Report.html
