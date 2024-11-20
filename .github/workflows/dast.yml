@@ -111,10 +111,10 @@ jobs:
               results=[],
           )
           
-          sarif = SarifSchema(version="2.1.0", runs=[run])
+          sarif = Sarif(version="2.1.0", runs=[run])
           
           with open("report.sarif", "w") as f:
-              f.write(sarif.to_json())
+              f.write(sarif.to_json(indent=2))
           EOF
 
       - name: Upload SARIF report
