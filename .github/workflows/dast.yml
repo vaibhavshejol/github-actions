@@ -93,7 +93,7 @@ jobs:
           pip install sarif-om
           python - <<EOF
           import json
-          from sarif_om import *
+          from sarif_om import Sarif, Run, Tool, ToolComponent
           
           with open("report_json.json", "r") as f:
               zap_report = json.load(f)
