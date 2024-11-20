@@ -94,6 +94,7 @@ jobs:
           python - <<EOF
           import json
           from sarif_om import Sarif, Run, Tool, ToolComponent
+          from sarif_om.sarif import Sarif
           
           with open("report_json.json", "r") as f:
               zap_report = json.load(f)
