@@ -88,19 +88,11 @@ jobs:
           name: DAST_Report.html
           path: ./report_html.html
 
-      - name: Compress reports into a zip file
-        run: |
-          zip DAST_Reports.zip report_json.json report_html.html
-
       - name: Package JSON Report into a Container
         run: |
-          # echo "FROM alpine" > Dockerfile
-          # echo "COPY report_json.json /report_json.json" >> Dockerfile
-          # echo "CMD [\"cat\", \"/report_json.json\"]" >> Dockerfile
-          
           echo "FROM alpine" > Dockerfile
-          echo "COPY DAST_Reports.zip /DAST_Reports.zip" >> Dockerfile
-          echo "CMD [\"cat\", \"/DAST_Reports.zip\"]" >> Dockerfile
+          echo "COPY report_json.json /report_json.json" >> Dockerfile
+          echo "CMD [\"cat\", \"/report_json.json\"]" >> Dockerfile
           docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/dast-report:latest .
 
       - name: Push JSON Report to GitHub Container Registry
