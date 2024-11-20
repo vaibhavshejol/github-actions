@@ -123,7 +123,9 @@ jobs:
 
       - name: Push JSON Report to GitHub Container Registry
         # run: docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/dast-report:latest
-        run: docker push $IMAGE_TAG
+        run: |
+        echo "Image tag: $IMAGE_TAG"
+        docker push "$IMAGE_TAG"
 
       - name: stop docker
         if: always()
