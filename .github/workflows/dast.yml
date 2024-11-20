@@ -62,7 +62,7 @@ jobs:
         run: sleep 10
 
       - name: Application container logs
-        run: docker logs github-action-pipeline
+        run: docker logs github-actions
 
       - name: Test container is running
         run: curl -s localhost:9090/com.amazingcode.in/api/message
