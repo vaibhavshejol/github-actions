@@ -49,14 +49,10 @@ def convert_zap_to_sarif(zap_json):
                     "text": alert.get("name", "")
                 },
                 "fullDescription": {
-                    "text": alert.get("desc", "").replace("<p>", "").replace("</p>", " ")
+                    "text": alert.get("desc", "").replace("<p>", "").replace("</p>", " ").strip()
                 },
                 "help": {
-                    "text": f"""
-                    Description: {alert.get('desc', '').replace('<p>', '').replace('</p>', ' ')}
-                    Solution: {alert.get('solution', '').replace('<p>', '').replace('</p>', ' ')}
-                    Reference: {alert.get('reference', '').replace('<p>', '').replace('</p>', ' ')}
-                    """
+                    "text": f"Description: {alert.get('desc', '').replace('<p>', '').replace('</p>', ' ').strip()} Solution: {alert.get('solution', '').replace('<p>', '').replace('</p>', ' ').strip()} Reference: {alert.get('reference', '').replace('<p>', '').replace('</p>', ' ').strip()}"
                 },
                 "properties": {
                     "security-severity": alert.get("riskcode", "0")
@@ -73,7 +69,7 @@ def convert_zap_to_sarif(zap_json):
                     "ruleId": rule_id,
                     "level": risk_level_map.get(alert.get("riskcode", "0"), "note"),
                     "message": {
-                        "text": alert.get("desc", "").replace("<p>", "").replace("</p>", " ")
+                        "text": alert.get("desc", "").replace("<p>", "").replace("</p>", " ").strip()
                     },
                     "locations": [
                         {
@@ -102,15 +98,15 @@ def convert_zap_to_sarif(zap_json):
 def main():
     try:
         # Read input file
-        with open('zap_report.json', 'r') as f:
+        with open('report_json.json', 'r') as f:
             zap_json = json.load(f)
         
         # Convert to SARIF
         sarif_output = convert_zap_to_sarif(zap_json)
         
-        # Write output file - Fixed the json.dump syntax
+        # Write output file with compact JSON
         with open('zap_report.sarif', 'w') as f:
-            json.dump(sarif_output, f, indent=2)
+            json.dump(sarif_output, f, separators=(',', ':'))
             
         print("Successfully converted ZAP report to SARIF format")
         
