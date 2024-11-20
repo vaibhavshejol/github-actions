@@ -76,21 +76,6 @@ jobs:
           cmd_options: '-a -j -l WARN -r report_html.html -w report_md.md -J report_json.json -z "-addoninstallall" '
           allow_issue_writing: true
 
-      # Convert ZAP JSON to SARIF report
-      - name: Convert ZAP JSON to SARIF
-        uses: microsoft/sarif-multitool@v0.9
-        with:
-          input: report_json.json
-          output: report_sarif.sarif
-          tool: zap
-
-      # Upload SARIF Report to Artifact
-      - name: Upload SARIF report
-        uses: actions/upload-artifact@v3
-        with:
-          name: DAST_Report.json
-          path: ./report_sarif.sarif
-
       - name: Upload json report
         uses: actions/upload-artifact@v3
         with:
