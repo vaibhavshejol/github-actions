@@ -108,32 +108,18 @@ jobs:
           name: DAST_Report.html
           path: ./report_html.html
 
-      - name: Package JSON Report into a Container
+      - name: Package JSON Report & Upload to Container registry
         run: |
           echo "FROM alpine" > Dockerfile
           echo "COPY report_json.json /report_json.json" >> Dockerfile
           echo "CMD [\"cat\", \"/report_json.json\"]" >> Dockerfile
 
-          echo "Repository Owner: ${{ github.repository_owner }}"
-          echo "Repository Name: ${{ github.event.repository.name }}"
-
           REPO_OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           REPO_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
 
-          echo "Lowercase Repo Owner: $REPO_OWNER"
-          echo "Lowercase Repo Name: ${REPO_NAME}"
-
           IMAGE_TAG="ghcr.io/${REPO_OWNER}/${REPO_NAME}/dast-report:latest"
 
-          echo "Full Image Tag: $IMAGE_TAG"
-
-          # docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/dast-report:latest .
           docker build -t $IMAGE_TAG .
-
-      - name: Push JSON Report to GitHub Container Registry
-        # run: docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/dast-report:latest
-        run: |
-          echo "Image tag: $IMAGE_TAG"
           docker push "$IMAGE_TAG"
 
       - name: stop docker
