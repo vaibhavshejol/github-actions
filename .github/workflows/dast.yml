@@ -56,7 +56,7 @@ jobs:
       #     docker rm -f github-action-pipeline-db || true
       #     docker-compose up -d
       - name: Run application in container to scan with ZAP
-      docker run -d -p 9090:9090 --name github-actions ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
+        run: docker run -d -p 9090:9090 --name github-actions ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
     
       - name: Wait 10 seconds to start application
         run: sleep 10
