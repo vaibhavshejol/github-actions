@@ -68,16 +68,13 @@ jobs:
           cmd_options: '-a -j -l WARN -r report_html.html -w report_md.md -J report_json.json -z "-addoninstallall" '
           allow_issue_writing: true
 
-      - name: Change extension json to sarif
-        run: cp report_json.json zap_report.sarif
+      # Copy ZAP report to expected filename
+      - name: Copy ZAP report
+        run: cp report_json.json zap_report.json
 
-      # # Copy ZAP report to expected filename
-      # - name: Copy ZAP report
-      #   run: cp report_json.json zap_report.json
-
-      # # Convert ZAP report to SARIF
-      # - name: Convert ZAP report to SARIF
-      #   run: python zap_to_sarif.py
+      # Convert ZAP report to SARIF
+      - name: Convert ZAP report to SARIF
+        run: python zap_to_sarif.py
 
       - name: Upload SARIF report
         uses: actions/upload-artifact@v3
