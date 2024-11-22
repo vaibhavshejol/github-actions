@@ -38,6 +38,7 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew build -x test
 
+      # Login to docker container registry
       - name: Log in to the Container registry
         uses: docker/login-action@v2.1.0
         with:
@@ -45,16 +46,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
-      # - name: Install Docker Compose
-      #   run: |
-      #       sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-      #       sudo chmod +x /usr/local/bin/docker-compose
-      
-      # - name: Run application in container to scan with ZAP
-        # run: |
-      #     docker rm -f github-action-pipeline || ture
-      #     docker rm -f github-action-pipeline-db || true
-      #     docker-compose up -d
+      # Run Application using container image
       - name: Run application in container to scan with ZAP
         run: docker run -d -p 9090:9090 --name github-actions ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest
     
@@ -65,7 +57,7 @@ jobs:
         run: docker logs github-actions
 
       - name: Test container is running
-        run: curl -s localhost:9090/com.amazingcode.in/api/message
+        run: curl -v localhost:9090/com.amazingcode.in/api/message
      
       - name: Run ZAP OWASP full scan
         uses: zaproxy/action-full-scan@v0.4.0
@@ -79,12 +71,6 @@ jobs:
       # Copy ZAP report to expected filename
       - name: Copy ZAP report
         run: cp report_json.json zap_report.json
-
-      # Install Python
-      # - name: Set up Python
-      #   uses: actions/setup-python@v4
-      #   with:
-      #     python-version: '3.x'
 
       # Convert ZAP report to SARIF
       - name: Convert ZAP report to SARIF
@@ -125,7 +111,6 @@ jobs:
       - name: stop docker
         if: always()
         run: |
-          # docker-compose down
           docker stop github-actions || true
           docker rm github-actions || true
           docker container prune --force || true
